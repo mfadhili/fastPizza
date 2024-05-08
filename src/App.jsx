@@ -4,13 +4,20 @@ import Menu from "./features/menu/Menu.jsx";
 import Cart from "./features/cart/Cart.jsx";
 import Order from "./features/order/Order.jsx";
 import CreateOrder from "./features/order/CreateOrder.jsx";
+import AppLayout from "./ui_components/AppLayout.jsx";
 
 const router = createBrowserRouter([
-    { path: '/', element: <Home /> },
-    { path: '/menu', element: <Menu /> },
-    { path: '/cart', element: <Cart /> },
-    { path: '/order/new', element: <CreateOrder /> },
-    { path: '/order/:orderId', element: <Order /> },
+    {
+        element: <AppLayout/>,
+        children: [
+            { path: '/', element: <Home /> },
+            { path: '/menu', element: <Menu /> },
+            { path: '/cart', element: <Cart /> },
+            { path: '/order/new', element: <CreateOrder /> },
+            { path: '/order/:orderId', element: <Order /> },
+        ]
+    },
+
 ]);
 
 function App() {
