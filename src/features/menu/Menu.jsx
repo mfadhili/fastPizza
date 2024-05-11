@@ -22,9 +22,6 @@ export async function loader() {
 
 export default Menu;
 
-
-
-
 /*
 *
 * [
