@@ -1,4 +1,7 @@
 // https://uibakery.io/regex-library/phone-number
+import {Form, redirect, useNavigation} from "react-router-dom";
+import {createOrder} from "../../services/apiRestaurant.js";
+
 const isValidPhone = (str) =>
   /^\+?\d{1,4}?[-.\s]?\(?\d{1,3}?\)?[-.\s]?\d{1,4}[-.\s]?\d{1,4}[-.\s]?\d{1,9}$/.test(
     str
@@ -30,15 +33,17 @@ const fakeCart = [
 ];
 
 function CreateOrder() {
+  const navigation = useNavigation();
+  const isSubmitting = navigation.state == 'submitting';
   // const [withPriority, setWithPriority] = useState(false);
   const cart = fakeCart;
-  console.log(cart)
+  console.log(cart);
 
   return (
     <div>
       <h2>Ready to order? Lets go!</h2>
 
-      <form>
+      <Form method={"post"} action={"/order/new"}>
         <div>
           <label>First Name</label>
           <input type="text" name="customer" required />
@@ -54,7 +59,7 @@ function CreateOrder() {
         <div>
           <label>Address</label>
           <div>
-            <input type="text" name="address" required />
+            <input type="text" name="address"    />
           </div>
         </div>
 
@@ -70,11 +75,27 @@ function CreateOrder() {
         </div>
 
         <div>
-          <button>Order now</button>
+          <input type={"hidden"} name={"cart"} value={JSON.stringify(cart)} />
+          <button disabled={isSubmitting}>{isSubmitting ? "Placing order...": "Order now"}</button>
         </div>
-      </form>
+      </Form>
     </div>
   );
+}
+
+export async function action({request}) {
+  const formData = await request.formData();
+  const data = Object.fromEntries(formData);
+  const order = {
+    ...data,
+    cart: JSON.parse(data.cart),
+    priority: data.priority === "on",
+  }
+
+  console.log(order);
+  const newOrder = await createOrder(order);
+
+  return redirect(`/order/${newOrder.id}`);
 }
 
 export default CreateOrder;
